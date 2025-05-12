@@ -8,7 +8,7 @@ public enum EnvError: Error {
 public class Env {
     private var cache: [String: String] = [:]
     
-    public init(_ filename: String ) {
+    public init(_ filename: String = ".env") {
         _ = try? self.load(filename: filename)
     }
     
@@ -43,10 +43,16 @@ public class Env {
             }
             
             let key = parts[0].trimmingCharacters(in: .whitespaces)
-            let value = parts[1].trimmingCharacters(in: .whitespaces)
+            var value = parts[1].trimmingCharacters(in: .whitespaces)
             
             if key.rangeOfCharacter(from: .whitespaces) != nil {
                 throw EnvError.invalidValue
+            }
+            
+            if value.count > 1, value.first == "\"", value.last == "\"" {
+                value.removeLast()
+                value.removeFirst()
+                value = value.replacingOccurrences(of: "\\\"", with: "\"")
             }
             
             cache[key] = value

@@ -20,3 +20,16 @@ import Env
     #expect(sut.int("DEV_PORT") == 7000)
     #expect(sut.int("PROD_PORT") == 8000)
 }
+
+@Test func loadString() async throws {
+    let raw = """
+    PASSWORD = 12345
+    DOMAIN="github.com"
+    QUOTED = "Break the \"Strike\""
+    """
+    let sut = try Env().load(raw: raw)
+    #expect(sut.get("PASSWORD") == "12345")
+    #expect(sut.get("DOMAIN") == "github.com")
+    print(sut.get("QUOTED") ?? "")
+    #expect(sut.get("QUOTED") == "Break the \"Strike\"")
+}
