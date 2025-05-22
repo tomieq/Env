@@ -71,4 +71,8 @@ public class Env {
     public func bool(_ key: String) -> Bool? {
         Bool(get(key)?.lowercased() ?? "")
     }
+    
+    public func set(_ key: String, _ value: CustomStringConvertible) {
+        cache[key] = value.description
+    }
 }

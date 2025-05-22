@@ -33,3 +33,13 @@ import Env
     print(sut.get("QUOTED") ?? "")
     #expect(sut.get("QUOTED") == "Break the \"Strike\"")
 }
+
+@Test func override() async throws {
+    let raw = """
+    PASSWORD = 12345
+    """
+    let sut = try Env().load(raw: raw)
+    #expect(sut.get("PASSWORD") == "12345")
+    sut.set("PASSWORD", 1111)
+    #expect(sut.get("PASSWORD") == "1111")
+}
