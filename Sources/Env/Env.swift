@@ -7,6 +7,9 @@ public enum EnvError: Error {
 
 public class Env {
     private var cache: [String: String] = [:]
+    public static let shared: Env = {
+        Env()
+    }()
     
     public init(_ filename: String = ".env") {
         _ = try? self.load(filename: filename)
