@@ -63,19 +63,19 @@ public class Env {
         return self
     }
     
-    public func get(_ key: String) -> String? {
-        cache[key] ?? ProcessInfo.processInfo.environment[key]
+    public func get(_ key: CustomStringConvertible) -> String? {
+        cache[key.description] ?? ProcessInfo.processInfo.environment[key.description]
     }
     
-    public func int(_ key: String) -> Int? {
+    public func int(_ key: CustomStringConvertible) -> Int? {
         Int(get(key) ?? "")
     }
     
-    public func bool(_ key: String) -> Bool? {
+    public func bool(_ key: CustomStringConvertible) -> Bool? {
         Bool(get(key)?.lowercased() ?? "")
     }
     
-    public func set(_ key: String, _ value: CustomStringConvertible) {
-        cache[key] = value.description
+    public func set(_ key: CustomStringConvertible, _ value: CustomStringConvertible) {
+        cache[key.description] = value.description
     }
 }

@@ -14,19 +14,19 @@
 import Foundation
 
 public enum Param {
-    public static func get(_ name: String) -> String? {
-        Self.syntax1(name) ?? Self.syntax2(name)
+    public static func get(_ name: CustomStringConvertible) -> String? {
+        Self.syntax1(name.description) ?? Self.syntax2(name.description)
     }
     
-    public static func int(_ name: String) -> Int? {
-        guard let text = Self.syntax1(name) ?? Self.syntax2(name), !text.isEmpty else {
+    public static func int(_ name: CustomStringConvertible) -> Int? {
+        guard let text = Self.get(name), !text.isEmpty else {
             return nil
         }
         return Int(text)
     }
     
-    public static func bool(_ name: String) -> Bool? {
-        guard let text = Self.syntax1(name) ?? Self.syntax2(name), !text.isEmpty else {
+    public static func bool(_ name: CustomStringConvertible) -> Bool? {
+        guard let text =  Self.get(name), !text.isEmpty else {
             return nil
         }
         return Bool(text.lowercased())
