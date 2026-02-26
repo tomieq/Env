@@ -7,6 +7,19 @@ You can load values from custom files with `load(filename:)`:
 let env = Env() // it will silently try to load .env file if exists
 try env.load(filename: ".env.prod")
 ```
+# Param
+
+Util to get launch param values. It supports 3 syntax types:
+```
+app_name port=80 host=0.0.0.0
+app_name -port 80 -host 0.0.0.0
+app_name --port 80 --host 0.0.0.0
+```
+In order to get value just use:
+```swift
+let port = Param.int("port")
+let host = Param.get("host")
+```
 
 ### SPM
 
