@@ -6,8 +6,10 @@
 //
 
 /// Parses and returns params used when launching the app
-///  It supports two syntax:
+///  It supports syntax:
 ///   app port=80 folder=/
+///   app -port=80 -folder=/
+///   app --port=80 --folder=/   
 ///   app -p 80 -folder /
 ///   app --p 80 --folder /
 
@@ -36,10 +38,9 @@ public enum Param {
         for argument in args {
             let parts = argument.split(separator: "=")
             guard parts.count == 2 else { continue }
-            let paramName = parts[0]
-            let paramValue = parts[1]
-            if paramName == name {
-                let value = paramValue.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+            let argument = parts[0]
+            if argument == name || argument == "-\(name)" || argument == "--\(name)" {
+                let value = parts[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
                 return value
             }
         }

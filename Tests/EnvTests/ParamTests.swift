@@ -11,6 +11,8 @@ import Testing
 @Test func parseSyntax1() async throws {
     #expect(Param.syntax1("port", args: ["port=80"]) == "80")
     #expect(Param.syntax1("port", args: ["port=\"80\""]) == "80")
+    #expect(Param.syntax1("port", args: ["-port=\"80\""]) == "80")
+    #expect(Param.syntax1("port", args: ["--port=\"80\""]) == "80")
     #expect(Param.syntax1("port", args: ["id=6", "port=\"80\"", "host=localhost"]) == "80")
 }
 

@@ -9,9 +9,11 @@ try env.load(filename: ".env.prod")
 ```
 # Param
 
-Util to get launch param values. It supports 3 syntax types:
+Utility object to get launch param values. It supports following syntax types:
 ```
 app_name port=80 host=0.0.0.0
+app_name -port=80 -host=0.0.0.0
+app_name --port=80 --host=0.0.0.0
 app_name -port 80 -host 0.0.0.0
 app_name --port 80 --host 0.0.0.0
 ```
