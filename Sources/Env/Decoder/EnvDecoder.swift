@@ -62,12 +62,12 @@ private final class EnvSingleValueDecoder: SingleValueDecodingContainer {
 
     func decode<T>(_: T.Type) throws -> T where T: Decodable {
         guard let value else {
-            throw DecodingError.valueNotFound(T.self, at: self.codingPath)
+            throw EnvError.missingValue("\(T.self) value for \(self.codingPath.first?.stringValue.toSnakeCase ?? "nil")")
         }
         if let convertible = T.self as? EnvValueConvertible.Type {
-            return try convertible.convertFromEnvData(value) as! T
+            return try convertible.convertFromEnvData(value, key: codingPath) as! T
         } else {
-            throw DecodingError.typeNotSupported(T.self, at: self.codingPath)
+            throw EnvError.typeNotSupported("\(T.self) value for \(self.codingPath.first?.stringValue.toSnakeCase ?? "nil")")
         }
     }
 }
@@ -98,13 +98,13 @@ private final class EnvKeyedDecoder<K>: KeyedDecodingContainerProtocol where K: 
 
     func decode<T>(_: T.Type, forKey key: K) throws -> T where T: Decodable {
         guard let val =  value(at: key) else {
-            throw DecodingError.valueNotFound(T.self, at: self.codingPath + [key])
+            throw EnvError.missingValue("\(T.self) value for \(key.stringValue.toSnakeCase)")
         }
         guard let convertible = T.self as? EnvValueConvertible.Type else {
             let decoder = EnvDecoderCore(context: context, codingPath: codingPath + [key])
             return try T(from: decoder)
         }
-        return try convertible.convertFromEnvData(val) as! T
+        return try convertible.convertFromEnvData(val, key: codingPath + [key]) as! T
     }
 
     func nestedContainer<NestedKey>(keyedBy _: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey>
@@ -150,7 +150,7 @@ private final class EnvUnkeyedDecoder: UnkeyedDecodingContainer {
     }
 
     func decode<T>(_: T.Type) throws -> T where T: Decodable {
-        throw DecodingError.valueNotFound(T.self, at: self.codingPath)
+        throw EnvError.missingValue("\(T.self) value for \(self.codingPath.first?.stringValue.toSnakeCase ?? "nil")")
     }
 
     func nestedContainer<NestedKey>(keyedBy _: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey>
@@ -165,31 +165,5 @@ private final class EnvUnkeyedDecoder: UnkeyedDecodingContainer {
     func superDecoder() throws -> Decoder {
         defer { currentIndex += 1 }
         return EnvDecoderCore(context: self.context, codingPath: self.codingPath)
-    }
-}
-
-extension DecodingError {
-    fileprivate static func typeMismatch(_ type: Any.Type, at path: [CodingKey]) -> DecodingError {
-        let pathString = path.map { $0.stringValue }.joined(separator: ".")
-        let context = DecodingError.Context(
-            codingPath: path,
-            debugDescription: "No \(type) was found at path \(pathString)")
-        return Swift.DecodingError.typeMismatch(type, context)
-    }
-    
-    fileprivate static func valueNotFound(_ type: Any.Type, at path: [CodingKey]) -> DecodingError {
-        let pathString = path.map { $0.stringValue }.joined(separator: ".")
-        let context = DecodingError.Context(
-            codingPath: path,
-            debugDescription: "No \(type) was found at path \(pathString)")
-        return Swift.DecodingError.valueNotFound(type, context)
-    }
-    
-    fileprivate static func typeNotSupported(_ type: Any.Type, at path: [CodingKey]) -> DecodingError {
-        let pathString = path.map { $0.stringValue }.joined(separator: ".")
-        let context = DecodingError.Context(
-            codingPath: path,
-            debugDescription: "The type \(type) at path \(pathString) is not supported")
-        return Swift.DecodingError.valueNotFound(type, context)
     }
 }

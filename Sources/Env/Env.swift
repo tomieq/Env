@@ -2,10 +2,12 @@ import Foundation
 
 typealias EnvCache = [EnvCacheKey: String]
 
-public enum EnvError: Error {
+public enum EnvError: Error, Equatable {
     case fileNotExist
     case invalidValue
     case invalidType(reason: String)
+    case missingValue(String)
+    case typeNotSupported(String)
 }
 
 public class Env {

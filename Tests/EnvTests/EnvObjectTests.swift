@@ -74,3 +74,39 @@ func entryWithUnderscore() async throws {
     let config: LongConfig = try env.decode()
     #expect(config.prodStorageUrl == "localhost:8080")
 }
+
+@Test
+func missingEntry() async throws {
+    let raw = """
+    STG_STORAGE_URL = localhost:8080
+    """
+    let env = try Env().load(raw: raw)
+    print(env.keys)
+    do {
+        let config: LongConfig = try env.decode()
+        #expect(config.prodStorageUrl == "")
+    } catch {
+        let expectedError = EnvError.missingValue("String value for PROD_STORAGE_URL")
+        #expect((error as? EnvError) == expectedError )
+    }
+}
+
+@Test
+func typeNotSupported() async throws {
+    
+    struct CustomConfig: Decodable {
+        let version: UInt8
+    }
+    let raw = """
+    VERSION = 3
+    """
+    let env = try Env().load(raw: raw)
+    print(env.keys)
+    do {
+        let config: CustomConfig = try env.decode()
+        #expect(config.version == 3)
+    } catch {
+        let expectedError = EnvError.typeNotSupported("UInt8 value for VERSION")
+        #expect((error as? EnvError) == expectedError )
+    }
+}
