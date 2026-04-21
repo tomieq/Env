@@ -73,7 +73,9 @@ public class Env {
     }
 
     public func get(_ key: CustomStringConvertible) -> String? {
-        value(for: key) ?? ProcessInfo.processInfo.environment[key.description]
+        value(for: key) ??
+        ProcessInfo.processInfo.environment[key.description] ??
+        ProcessInfo.processInfo.environment[key.description.toSnakeCase]
     }
     
     public func int(_ key: CustomStringConvertible) -> Int? {

@@ -13,8 +13,10 @@ import Testing
     #expect("hello_world".camelCased == "helloWorld")
     #expect("Hello-World".camelCased == "helloWorld")
     #expect("Hello_World".camelCased == "helloWorld")
+    #expect("HELLO_WORLD".camelCased == "helloWorld")
 }
 
 @Test func toSnakeCase() {
     #expect("helloWorld".toSnakeCase == "HELLO_WORLD")
+    #expect("HELLO_WORLD".toSnakeCase == "HELLO_WORLD")
 }
