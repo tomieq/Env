@@ -76,6 +76,20 @@ func entryWithUnderscore() async throws {
 }
 
 @Test
+func uppercasedConfig() async throws {
+    struct CustomConfig: Decodable {
+        let PROD_STORAGE_URL: String
+    }
+    let raw = """
+    PROD_STORAGE_URL = localhost:8080
+    """
+    let env = try Env().load(raw: raw)
+    print(env.keys)
+    let config: CustomConfig = try env.decode()
+    #expect(config.PROD_STORAGE_URL == "localhost:8080")
+}
+
+@Test
 func missingEntry() async throws {
     let raw = """
     STG_STORAGE_URL = localhost:8080

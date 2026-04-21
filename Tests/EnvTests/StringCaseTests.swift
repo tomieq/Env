@@ -14,6 +14,7 @@ import Testing
     #expect("Hello-World".camelCased == "helloWorld")
     #expect("Hello_World".camelCased == "helloWorld")
     #expect("HELLO_WORLD".camelCased == "helloWorld")
+    #expect("HELLO_WORLD_123".camelCased == "helloWorld123")
 }
 
 @Test func toSnakeCase() {
