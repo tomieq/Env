@@ -1,12 +1,15 @@
 import Foundation
 
+typealias EnvCache = [EnvCacheKey: String]
+
 public enum EnvError: Error {
     case fileNotExist
     case invalidValue
+    case invalidType(reason: String)
 }
 
 public class Env {
-    private var cache: [String: String] = [:]
+    private var cache: EnvCache = [:]
     public static let shared: Env = {
         Env()
     }()
@@ -58,13 +61,17 @@ public class Env {
                 value = value.replacingOccurrences(of: "\\\"", with: "\"")
             }
             
-            cache[key] = value
+            cache[.init(key)] = value
         }
         return self
     }
-    
+
+    public var keys: [String] {
+        cache.keys.map { $0.rawValue }
+    }
+
     public func get(_ key: CustomStringConvertible) -> String? {
-        cache[key.description] ?? ProcessInfo.processInfo.environment[key.description]
+        value(for: key) ?? ProcessInfo.processInfo.environment[key.description]
     }
     
     public func int(_ key: CustomStringConvertible) -> Int? {
@@ -72,10 +79,39 @@ public class Env {
     }
     
     public func bool(_ key: CustomStringConvertible) -> Bool? {
-        Bool(get(key)?.lowercased() ?? "")
+        get(key)?.bool
     }
     
     public func set(_ key: CustomStringConvertible, _ value: CustomStringConvertible) {
-        cache[key.description] = value.description
+        cache[.init(key)] = value.description
+    }
+    
+    public func decode<T>() throws -> T where T: Decodable {
+        try EnvDecoder(context: self).decode()
+    }
+}
+
+struct EnvCacheKey: Hashable {
+    let rawValue: String
+    
+    init(_ rawValue: CustomStringConvertible) {
+        self.rawValue = rawValue.description
+    }
+    
+    func matches(_ key: CustomStringConvertible) -> Bool {
+        rawValue == key.description || rawValue.camelCased == key.description
+    }
+}
+
+extension Env {
+    
+    private var envKeys: [EnvCacheKey] {
+        Array(cache.keys)
+    }
+    
+    func value(for key: CustomStringConvertible) -> String? {
+        let key = envKeys.first { $0.matches(key) }
+        guard let envKey = key else { return nil }
+        return self.cache[envKey]
     }
 }

@@ -43,3 +43,27 @@ import Env
     sut.set("PASSWORD", 1111)
     #expect(sut.get("PASSWORD") == "1111")
 }
+
+@Test func underscoreToCamelcase() async throws {
+    let raw = """
+    API_KEY = 9284892452834
+    """
+    let sut = try Env().load(raw: raw)
+    #expect(sut.get("apiKey") == "9284892452834")
+}
+
+@Test func dotsToCamelcase() async throws {
+    let raw = """
+    API.KEY = 9284892452834
+    """
+    let sut = try Env().load(raw: raw)
+    #expect(sut.get("apiKey") == "9284892452834")
+}
+
+@Test func dashToCamelcase() async throws {
+    let raw = """
+    API-KEY = 9284892452834
+    """
+    let sut = try Env().load(raw: raw)
+    #expect(sut.get("apiKey") == "9284892452834")
+}
