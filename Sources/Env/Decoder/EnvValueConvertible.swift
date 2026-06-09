@@ -43,6 +43,34 @@ extension Int8: EnvValueConvertible {
     }
 }
 
+extension UInt64: EnvValueConvertible {
+    static func convertFromEnvData(_ data: String, key: CustomStringConvertible) throws -> UInt64 {
+        guard let value = UInt64(data) else { throw EnvError.invalidType(reason: "Expected UInt64 value for \(key)") }
+        return value
+    }
+}
+
+extension UInt32: EnvValueConvertible {
+    static func convertFromEnvData(_ data: String, key: CustomStringConvertible) throws -> UInt32 {
+        guard let value = UInt32(data) else { throw EnvError.invalidType(reason: "Expected UInt32 value for \(key)") }
+        return value
+    }
+}
+
+extension UInt16: EnvValueConvertible {
+    static func convertFromEnvData(_ data: String, key: CustomStringConvertible) throws -> UInt16 {
+        guard let value = UInt16(data) else { throw EnvError.invalidType(reason: "Expected UInt16 value for \(key)") }
+        return value
+    }
+}
+
+extension UInt8: EnvValueConvertible {
+    static func convertFromEnvData(_ data: String, key: CustomStringConvertible) throws -> UInt8 {
+        guard let value = UInt8(data) else { throw EnvError.invalidType(reason: "Expected UInt8 value for \(key)") }
+        return value
+    }
+}
+
 extension Double: EnvValueConvertible {
     static func convertFromEnvData(_ data: String, key: CustomStringConvertible) throws -> Double {
         guard let value = Double(data) else { throw EnvError.invalidType(reason: "Expected Double value for \(key)") }
